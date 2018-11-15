@@ -1,4 +1,4 @@
-;;; awk-preview.el --- Preview awk filter and apply it
+;;; awk-preview.el --- Preview and Apply AWK Filter
 
 ;; Copyright (C) 2018 10sr
 
@@ -41,8 +41,8 @@
 ;;; Code:
 
 (defgroup awk-preview nil
-  "Awk previewer."
-  :tag "Awk Preview"
+  "AWK previewer."
+  :tag "AWK Preview"
   :prefix "awk-preview-"
   :group 'tools)
 
@@ -50,14 +50,14 @@
   (or (executable-find "gawk")
       (executable-find "awk")
       "awk")
-  "Awk program to execute."
+  "AWK executable path or name."
   :type 'string
   :group 'awk-preview)
 
 (defcustom awk-preview-switches
   ;; '("--sandbox")
   nil
-  "String of awk options appended when running awk preview."
+  "String of AWK options appended when running awk-preview."
   :type '(repeat string)
   :group 'awk-preview)
 
@@ -76,15 +76,15 @@
   'ask
   "Decides if orphan program buffer should be killed.
 
-Decides whether program buffers which do not visit any files
-will be killed when exiting awk-preview sessions.
+This variable defines whether program buffers which do not visit any
+files will be killed when exiting awk-preview sessions.
 
 When set to nil, do not kill program buffers.
 When set to `ask', ask user whether to kill them.
 For other values always kill them silently.
 
-When a program buffer is visiting a file, the buffer will not be killed for any
-cases regardless of this variable."
+When a program buffer is visiting a file, the buffer will not be
+killed for any cases regardless of this variable."
   :type '(choice (const t)
                  (const nil)
                  (const ask))
@@ -122,7 +122,7 @@ cases regardless of this variable."
      t)
 
 (defun awk-preview--invoke-awk (buf beg end progfile output &optional delete display)
-  "Invoke awk process.
+  "Invoke AWK process.
 
 Input is given from BUF buffer with BEG and END.
 Use PROGFILE as awk program file (-f option).
@@ -199,7 +199,7 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
       buf)))
 
 (defun awk-preview (beg end &optional program-buffer)
-  "Run awk and preview result.
+  "Run AWK and preview result.
 
 BEG and END should be points of region to filter with awk.
 If called interactively without region, whole contents will be
