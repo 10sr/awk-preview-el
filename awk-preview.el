@@ -113,6 +113,8 @@ killed for any cases regardless of this variable."
   (program-buffer nil)
   ;; Window configuration when entering awk-review
   (previous-window-configuration nil)
+  ;; Window configuration when runnning awk-preview session
+  (window-configuration nil)
   )
 
 (defvar-local awk-preview--env nil
@@ -206,8 +208,8 @@ BEG and END should be points of region to filter with awk.
 If called interactively without region, whole contents will be
 passwd to awk process.
 
-PROGRAM-BUFFER, if given, should be a awk buffer and it will be used
-to filter input."
+PROGRAM-BUFFER, if given, should be a awk buffer and its content
+will be used as a awk program to filter input."
   (interactive (if (use-region-p)
                    (list (region-beginning)
                          (region-end))
@@ -217,6 +219,7 @@ to filter input."
              (awk-preview--env-running-p awk-preview--env))
     (error "AWK-Preview already running"))
   (let ((e (make-awk-preview--env)))
+    (setq awk-preview--env e)
     (setf (awk-preview--env-point-beg e) beg)
     (setf (awk-preview--env-point-end e) end)
 
@@ -230,6 +233,13 @@ to filter input."
     (setf (awk-preview--env-previous-window-configuration e)
           (current-window-configuration))
 
+    (set-window-buffer (get-buffer-window (awk-preview--env-source-buffer e))
+                       (awk-preview--env-preview-buffer e))
+    (pop-to-buffer (awk-preview--env-program-buffer e))
+    (switch-to-buffer (awk-preview--env-program-buffer e))
+    (setf (awk-preview--env-window-configuration e)
+          (current-window-configuration))
+
     (cl-assert (awk-preview--env-point-beg e))
     (cl-assert (awk-preview--env-point-end e))
     (cl-assert (awk-preview--env-preview-point-beg e))
@@ -239,13 +249,8 @@ to filter input."
     (cl-assert (awk-preview--env-preview-buffer e))
     (cl-assert (awk-preview--env-program-buffer e))
     (cl-assert (awk-preview--env-previous-window-configuration e))
-    (setq awk-preview--env e)
+    (cl-assert (awk-preview--env-window-configuration e))
 
-    (set-window-buffer (get-buffer-window (awk-preview--env-source-buffer e))
-                       (awk-preview--env-preview-buffer e))
-    (pop-to-buffer (awk-preview--env-program-buffer e))
-
-    (switch-to-buffer (awk-preview--env-program-buffer e))
     (setf (awk-preview--env-running-p e) t)
     (awk-preview-update-preview)
     ))
@@ -275,7 +280,8 @@ to filter input."
         (insert-buffer-substring output)
         (setf (awk-preview--env-preview-point-end awk-preview--env)
               (point)))
-      )))
+      ))
+  (set-window-configuration (awk-preview--env-window-configuration awk-preview--env)))
 
 (defun awk-preview-reset ()
   "Show original input in preview buffer."
