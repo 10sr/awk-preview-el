@@ -112,7 +112,7 @@ killed for any cases regardless of this variable."
   ;; Program buffer
   (program-buffer nil)
   ;; Window configuration when entering awk-review
-  (window-configuration nil)
+  (previous-window-configuration nil)
   )
 
 (defvar-local awk-preview--env nil
@@ -227,7 +227,7 @@ to filter input."
                                        (or program-buffer
                                            (awk-preview--create-program-buffer e)))
 
-    (setf (awk-preview--env-window-configuration e)
+    (setf (awk-preview--env-previous-window-configuration e)
           (current-window-configuration))
 
     (cl-assert (awk-preview--env-point-beg e))
@@ -238,7 +238,7 @@ to filter input."
     (cl-assert (awk-preview--env-source-buffer e))
     (cl-assert (awk-preview--env-preview-buffer e))
     (cl-assert (awk-preview--env-program-buffer e))
-    (cl-assert (awk-preview--env-window-configuration e))
+    (cl-assert (awk-preview--env-previous-window-configuration e))
     (setq awk-preview--env e)
 
     (set-window-buffer (get-buffer-window (awk-preview--env-source-buffer e))
@@ -323,7 +323,7 @@ to filter input."
       (kill-buffer (awk-preview--env-program-buffer awk-preview--env)))
     (delete-file (awk-preview--env-program-filename awk-preview--env))
     (setf (awk-preview--env-running-p awk-preview--env) nil))
-  (set-window-configuration (awk-preview--env-window-configuration awk-preview--env)))
+  (set-window-configuration (awk-preview--env-previous-window-configuration awk-preview--env)))
 
 (defvar awk-preview-program-mode-map
   (let ((map (make-sparse-keymap)))
