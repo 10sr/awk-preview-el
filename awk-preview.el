@@ -211,6 +211,7 @@ portion if the mark is inactive.
 
 PROGRAM-BUFFER, if given, should be a awk buffer and its content
 will be used as a awk program to process input."
+  ;; TODO: What to do when source buffer is modified during session
   (interactive (if (use-region-p)
                    (list (region-beginning)
                          (region-end))
