@@ -204,12 +204,13 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
 (defun awk-preview (beg end &optional program-buffer)
   "Start an awk-preview session.
 
-BEG and END should be points of region to filter with awk.
-If called interactively without region, whole contents will be
-passwd to awk process.
+BEG and END should be points of region to pass to awk process.
+If called interactively, START and END are the start/end of the
+region if the mark is active, or of the buffer's accessible
+portion if the mark is inactive.
 
 PROGRAM-BUFFER, if given, should be a awk buffer and its content
-will be used as a awk program to filter input."
+will be used as a awk program to process input."
   (interactive (if (use-region-p)
                    (list (region-beginning)
                          (region-end))
