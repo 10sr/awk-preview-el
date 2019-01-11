@@ -224,6 +224,7 @@ will be used as a awk program to process input."
   (let ((e awk-preview--env))
     (unless (and e
                  (awk-preview--env-running-p awk-preview--env))
+      ;; TODO: Check that current buffer is source buffer if already running
       ;; If not running yet, create new env
       (setq e (make-awk-preview--env)))
     (setq awk-preview--env e)
