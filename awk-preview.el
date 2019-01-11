@@ -217,31 +217,44 @@ will be used as a awk program to process input."
                          (region-end))
                  (list (point-min)
                        (point-max))))
-  (when (and awk-preview--env
-             (awk-preview--env-running-p awk-preview--env))
-    ;; TODO: Do not raise error, instead set env and re-init session
-    (error "AWK-Preview already running"))
-  (let ((e (make-awk-preview--env)))
+  ;; (when (and awk-preview--env
+  ;;            (awk-preview--env-running-p awk-preview--env))
+  ;;   ;; TODO: Do not raise error, instead set env and re-init session
+  ;;   (error "AWK-Preview already running"))
+  (let ((e awk-preview--env))
+    (unless (and e
+                 (awk-preview--env-running-p awk-preview--env))
+      ;; If not running yet, create new env
+      (setq e (make-awk-preview--env)))
     (setq awk-preview--env e)
     (setf (awk-preview--env-point-beg e) beg)
     (setf (awk-preview--env-point-end e) end)
 
     (setf (awk-preview--env-source-buffer e) (current-buffer))
 
+    (when (awk-preview--env-preview-buffer e)
+      (kill-buffer (awk-preview--env-preview-buffer e)))
     (awk-preview--create-setup-preview-buffer e)
-    (awk-preview--setup-program-buffer e
-                                       (or program-buffer
-                                           (awk-preview--create-program-buffer e)))
 
-    (setf (awk-preview--env-previous-window-configuration e)
-          (current-window-configuration))
+    (if program-buffer
+        (awk-preview--setup-program-buffer e
+                                           program-buffer)
+      (unless (awk-preview--env-program-buffer e)
+        (awk-preview--setup-program-buffer e
+                                           (awk-preview--create-program-buffer e))))
 
-    (set-window-buffer (get-buffer-window (awk-preview--env-source-buffer e))
-                       (awk-preview--env-preview-buffer e))
-    (pop-to-buffer (awk-preview--env-program-buffer e))
-    (switch-to-buffer (awk-preview--env-program-buffer e))
-    (setf (awk-preview--env-window-configuration e)
-          (current-window-configuration))
+    (unless (awk-preview--env-previous-window-configuration e)
+      (setf (awk-preview--env-previous-window-configuration e)
+            (current-window-configuration)))
+
+    (if (awk-preview--env-window-configuration e)
+        (set-window-configuration (awk-preview--env-window-configuration e))
+      (set-window-buffer (get-buffer-window (awk-preview--env-source-buffer e))
+                         (awk-preview--env-preview-buffer e))
+      (pop-to-buffer (awk-preview--env-program-buffer e))
+      (switch-to-buffer (awk-preview--env-program-buffer e))
+      (setf (awk-preview--env-window-configuration e)
+            (current-window-configuration)))
 
     (cl-assert (awk-preview--env-point-beg e))
     (cl-assert (awk-preview--env-point-end e))
