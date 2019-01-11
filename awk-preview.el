@@ -219,6 +219,7 @@ will be used as a awk program to process input."
                        (point-max))))
   (when (and awk-preview--env
              (awk-preview--env-running-p awk-preview--env))
+    ;; TODO: Do not raise error, instead set env and re-init session
     (error "AWK-Preview already running"))
   (let ((e (make-awk-preview--env)))
     (setq awk-preview--env e)
@@ -326,7 +327,8 @@ will be used as a awk program to process input."
     (when (and (not (buffer-file-name (awk-preview--env-program-buffer awk-preview--env)))
                (if (eq 'ask
                        awk-preview-kill-orphan-program-buffer)
-                   (yes-or-no-p "Program buffer does not visit any file. Kill? ")
+                   (yes-or-no-p (format "Program buffer %S does not visit any file. Kill buffer and discard it contents? "
+                                        (awk-preview--env-program-buffer awk-preview--env)))
                  awk-preview-kill-orphan-program-buffer))
       (kill-buffer (awk-preview--env-program-buffer awk-preview--env)))
     (delete-file (awk-preview--env-program-filename awk-preview--env))
