@@ -91,6 +91,7 @@ killed for any cases regardless of this variable."
   :group 'awk-preview)
 
 (cl-defstruct awk-preview--env
+  ;; TODO: Use comment
   ;; Whether awk-preview is currently running
   (running-p nil)
   ;; Point of beg in source buffer
@@ -274,6 +275,8 @@ will be used as a awk program to process input."
 
 (defun awk-preview-update-preview ()
   "Update awk-preview."
+  ;; TODO: Do not delete only the target region, instead copy whole contents
+  ;; from source buffer every time
   (interactive)
   (cl-assert awk-preview--env)
   (with-current-buffer (awk-preview--env-program-buffer awk-preview--env)
