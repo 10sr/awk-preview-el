@@ -97,8 +97,7 @@ killed for any cases regardless of this variable."
   (point-beg nil)
   ;; Point of end in source buffer
   (point-end nil)
-  ;; Point of beginning
-  ;; Used by preview buffer and always same as point-beg
+  ;; Awk preview program temporary file name
   (program-filename nil)
   ;; Source buffer
   (source-buffer nil)
