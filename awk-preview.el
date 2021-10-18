@@ -274,9 +274,10 @@ will be used as a awk program to process input."
   (interactive)
   (cl-assert awk-preview--env)
   (with-current-buffer (awk-preview--env-program-buffer awk-preview--env)
-    (write-region (point-min)
-                  (point-max)
-                  (awk-preview--env-program-filename awk-preview--env)))
+    (let ((inhibit-message t))
+      (write-region (point-min)
+                    (point-max)
+                    (awk-preview--env-program-filename awk-preview--env))))
   (let ((output (get-buffer-create " *awk-preview temporary output*"))
         (progfile (awk-preview--env-program-filename awk-preview--env)))
     (with-current-buffer output
